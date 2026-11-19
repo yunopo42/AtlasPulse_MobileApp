@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AtlasPulse — Amiral Gemisi Seyahat & Keşif UI/UX Prototipi</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      /* Light Mode: Sunlit Atlas (Sıcak Alabaster & Soft Pastel) */
+      --bg-studio: #EFECE6;
+      --bg-app: #FAF8F5;
+      --bg-card: #FFFFFF;
+      --bg-subtle: #F3EFEA;
+      --bg-glass: rgba(255, 255, 255, 0.88);
+      --border-ink: #E5E0D8;
+      --text-main: #1E242B;
+      --text-sub: #5B6470;
+      --text-muted: #8E97A4;
+
+      /* Tactile 3D Palette */
+      --sage: #22C55E;
+      --sage-lip: #16A34A;
+      --azure: #0EA5E9;
+      --azure-lip: #0284C7;
+      --coral: #F97316;
+      --coral-lip: #EA580C;
+      --amber: #F59E0B;
+      --amber-lip: #D97706;
+      --violet: #8B5CF6;
+      --violet-lip: #7C3AED;
+
+      /* Cartography Tokens */
+      --map-sea: #EAF4FA;
+      --map-land: #FDFBF7;
+      --map-land-stroke: #D8D1C5;
+      --map-visited: #DCFCE7;
+      --map-visited-stroke: #22C55E;
+      --map-graticule: rgba(14, 165, 233, 0.14);
+      --phone-frame: #22262E;
+      --shadow-soft: 0 12px 28px -6px rgba(30, 36, 43, 0.08);
+    }
+
+    [data-theme="dark"] {
+      /* Dark Mode: Midnight Expedition (Yumuşak Gece Kampı) */
+      --bg-studio: #0B0E14;
+      --bg-app: #131722;
+      --bg-card: #1C2232;
+      --bg-subtle: #242C40;
+      --bg-glass: rgba(28, 34, 50, 0.88);
+      --border-ink: #2B344A;
+      --text-main: #F4F6FA;
+      --text-sub: #A2AEC2;
+      --text-muted: #69758C;
+
+      --sage: #34D399;
+      --sage-lip: #059669;
+      --azure: #38BDF8;
+      --azure-lip: #0284C7;
+      --coral: #FB923C;
+      --coral-lip: #EA580C;
+      --amber: #FBBF24;
+      --amber-lip: #D97706;
+      --violet: #A78BFA;
+      --violet-lip: #7C3AED;
+
+      --map-sea: #0F1726;
+      --map-land: #1A2336;
+      --map-land-stroke: #2D3954;
+      --map-visited: rgba(52, 211, 153, 0.18);
+      --map-visited-stroke: #34D399;
+      --map-graticule: rgba(56, 189, 248, 0.10);
+      --phone-frame: #090C12;
+      --shadow-soft: 0 16px 34px -8px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.25s ease, border-color 0.3s ease;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg-studio);
+      color: var(--text-main);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      overflow-x: hidden;
+    }
+
+    .font-mono-tech { font-family: 'JetBrains Mono', monospace; }
+    .font-hand { font-family: 'Caveat', cursive; }
+
+    /* Telefon Çerçevesi */
+    .device-shell {
+      width: 100%;
+      max-width: 402px;
+      height: 856px;
+      background-color: var(--bg-app);
+      border-radius: 52px;
+      border: 9px solid var(--phone-frame);
+      box-shadow: 0 30px 70px -15px rgba(15, 23, 42, 0.28), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    @media (max-width: 440px) {
+      body { padding: 0; background: var(--bg-app); }
+      .device-shell {
+        max-width: 100%;
+        height: 100vh;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+      }
+      .studio-toolbar { display: none !important; }
+    }
+
+    /* Duolingo Tarzı Dokunsal 3D Buton Fiziği */
+    .btn-3d {
+      position: relative;
+      border-radius: 18px;
+      font-weight: 800;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.1s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.1s ease, filter 0.15s ease;
+    }
+    .btn-3d:active {
+      transform: translateY(3px);
+      box-shadow: 0 1px 0 var(--lip-color, var(--border-ink)) !important;
+    }
+
+    .btn-sage {
+      background: var(--sage);
+      color: #FFFFFF;
+      --lip-color: var(--sage-lip);
+      box-shadow: 0 4px 0 var(--sage-lip);
+    }
+    .btn-azure {
+      background: var(--azure);
+      color: #FFFFFF;
+      --lip-color: var(--azure-lip);
+      box-shadow: 0 4px 0 var(--azure-lip);
+    }
+    .btn-coral {
+      background: var(--coral);
+      color: #FFFFFF;
+      --lip-color: var(--coral-lip);
+      box-shadow: 0 4px 0 var(--coral-lip);
+    }
+    .btn-amber {
+      background: var(--amber);
+      color: #1E242B;
+      --lip-color: var(--amber-lip);
+      box-shadow: 0 4px 0 var(--amber-lip);
+    }
+    .btn-surface {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1.5px solid var(--border-ink);
+      --lip-color: var(--border-ink);
+      box-shadow: 0 3px 0 var(--border-ink);
+    }
+
+    /* Dokunsal Kart Yüzeyi */
+    .tactile-card {
+      background-color: var(--bg-card);
+      border: 1.5px solid var(--border-ink);
+      box-shadow: 0 3px 0 var(--border-ink), var(--shadow-soft);
+      border-radius: 24px;
+    }
+
+    .glass-bar {
+      background-color: var(--bg-glass);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1.5px solid var(--border-ink);
+      box-shadow: var(--shadow-soft);
+    }
+
+    /* Harita Graticule & Rota Animasyonları */
+    @keyframes dashMove {
+      to { stroke-dashoffset: -44; }
+    }
+    .flight-arc {
+      stroke-dasharray: 6 6;
+      animation: dashMove 1.8s linear infinite;
+    }
+
+    @keyframes mascotBob {
+      0%, 100% { transform: translateY(0px) rotate(0deg); }
+      50% { transform: translateY(-3px) rotate(3deg); }
+    }
+    .mascot-float {
+      animation: mascotBob 2.8s ease-in-out infinite;
+    }
+
+    @keyframes pinDrop {
+      0% { transform: translate(-50%, -85%) scale(0.4); opacity: 0; }
+      70% { transform: translate(-50%, -45%) scale(1.12); opacity: 1; }
+      100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    }
+    .pin-pop {
+      animation: pinDrop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+    }
+
+    /* Tırtıklı Posta Pulu (Serrated Postage Stamp) */
+    .postage-stamp {
+      position: relative;
+      background: var(--bg-card);
+      border: 2px dashed var(--border-ink);
+      border-radius: 16px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    /* Ekran & Çekmece Geçişleri */
+    .tab-screen {
+      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+    }
+    .tab-screen.active {
+      display: flex;
+      animation: screenFade 0.28s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+    @keyframes screenFade {
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .bottom-sheet {
+      transform: translateY(105%);
+      transition: transform 0.38s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .bottom-sheet.open {
+      transform: translateY(0);
+    }
+
+    /* Waveform çubukları */
+    @keyframes eqBar {
+      0%, 100% { height: 6px; }
+      50% { height: 18px; }
+    }
+    .eq-1 { animation: eqBar 0.7s ease-in-out infinite; }
+    .eq-2 { animation: eqBar 0.5s ease-in-out infinite 0.15s; }
+    .eq-3 { animation: eqBar 0.8s ease-in-out infinite 0.3s; }
+    .eq-4 { animation: eqBar 0.6s ease-in-out infinite 0.1s; }
+
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body>
+
+  <!-- Masaüstü Yüzen Stüdyo Kontrol Çubuğu -->
+  <div class="studio-toolbar mb-4 px-4 py-2 rounded-full glass-bar flex items-center space-x-3 z-50">
+    <div class="flex items-center space-x-2 pr-2 border-r" style="border-color: var(--border-ink);">
+      <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+      <span class="text-xs font-extrabold tracking-tight">AtlasPulse Studio</span>
+    </div>
+
+    <button onclick="toggleTheme()" class="btn-3d btn-surface px-3 py-1.5 text-xs flex items-center space-x-1.5">
+      <i id="studio-theme-icon" data-lucide="moon" class="w-3.5 h-3.5 text-amber-500"></i>
+      <span id="studio-theme-label">Gece Kampı</span>
+    </button>
+
+    <button onclick="toggleProState()" id="studio-pro-btn" class="btn-3d btn-amber px-3 py-1.5 text-xs flex items-center space-x-1.5">
+      <i data-lucide="crown" class="w-3.5 h-3.5"></i>
+      <span id="studio-pro-label">Plan: Free</span>
+    </button>
+
+    <button onclick="triggerCelebration('Yeni Kaşif Rozeti Kazanıldı! +150 XP')" class="btn-3d btn-sage px-3 py-1.5 text-xs">
+      🎉 Kutlama Testi
+    </button>
+  </div>
+
+  <!-- ==================== MOBİL UYGULAMA ÇERÇEVESİ ==================== -->
+  <div class="device-shell">
+
+    <!-- Üst Durum & Marka Başlığı -->
+    <header class="px-5 pt-3.5 pb-2.5 flex items-center justify-between z-30 select-none">
+      <!-- Özel SVG Maskot: Pip (Havacı Gözlüklü Kaşif Kuşu) -->
+      <div class="flex items-center space-x-2.5">
+        <div class="w-10 h-10 rounded-2xl flex items-center justify-center shadow-sm border" style="background: var(--bg-card); border-color: var(--border-ink);">
+          <svg id="pip-mascot" class="w-8 h-8 mascot-float" viewBox="0 0 64 64" fill="none">
+            <!-- Gövde -->
+            <circle cx="32" cy="36" r="18" fill="#38BDF8"/>
+            <path d="M20 42C20 35 44 35 44 42C44 50 20 50 20 42Z" fill="#E0F2FE"/>
+            <!-- Kanat -->
+            <path d="M12 34C9 38 12 45 17 44" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+            <path d="M52 34C55 38 52 45 47 44" stroke="#0284C7" stroke-width="4" stroke-linecap="round"/>
+            <!-- Havacı Gözlüğü -->
+            <rect x="17" y="21" width="13" height="10" rx="5" fill="#F59E0B" stroke="#1E242B" stroke-width="2.5"/>
+            <rect x="34" y="21" width="13" height="10" rx="5" fill="#F59E0B" stroke="#1E242B" stroke-width="2.5"/>
+            <line x1="30" y1="26" x2="34" y2="26" stroke="#1E242B" stroke-width="2.5"/>
+            <circle cx="23.5" cy="26" r="2.5" fill="#1E242B"/>
+            <circle cx="40.5" cy="26" r="2.5" fill="#1E242B"/>
+            <!-- Gaga -->
+            <path d="M29 33L35 33L32 38Z" fill="#F97316" stroke="#1E242B" stroke-width="1.8" stroke-linejoin="round"/>
+            <!-- Sırt Çantası Kayışı -->
+            <path d="M21 43L43 43" stroke="#EA580C" stroke-width="2.5" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center space-x-1.5">
+            <span class="text-base font-extrabold tracking-tight">AtlasPulse</span>
+            <span id="header-tier-pill" class="px-2 py-0.5 rounded-full text-[9px] font-extrabold uppercase tracking-wider" style="background: var(--bg-subtle); color: var(--text-sub);">FREE</span>
+          </div>
+          <div class="flex items-center space-x-2 text-[11px] font-bold" style="color: var(--text-sub);">
+            <span class="text-orange-500">🔥 14 Gün</span>
+            <span>•</span>
+            <span class="font-mono-tech text-emerald-600 dark:text-emerald-400" id="header-xp">2.450 XP</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sağ Kontroller: Tema & Hızlı Ekle -->
+      <div class="flex items-center space-x-2">
+        <button onclick="toggleTheme()" class="btn-3d btn-surface w-9 h-9 flex items-center justify-center" title="Tema Değiştir">
+          <i id="mobile-theme-icon" data-lucide="moon" class="w-4 h-4 text-amber-500"></i>
+        </button>
+        <button onclick="toggleAddPinMode()" id="add-pin-toggle-btn" class="btn-3d btn-coral px-3 h-9 text-xs flex items-center space-x-1">
+          <i data-lucide="map-pin-plus" class="w-3.5 h-3.5"></i>
+          <span>Durak</span>
+        </button>
+      </div>
+    </header>
+
+    <!-- ==================== SEKME 1: ATLAS (İNTERAKTİF HARİTA) ==================== -->
+    <main id="tab-atlas" class="tab-screen active relative flex-1 flex-col overflow-hidden">
+
+      <!-- Üst Telemetri & Kategori Filtreleri -->
+      <div class="px-4 z-20 space-y-2">
+        <!-- İlerleme Özeti Şeridi -->
+        <div class="glass-bar rounded-2xl px-3.5 py-2 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div>
+              <div class="text-[9px] font-extrabold uppercase tracking-wider" style="color: var(--text-muted);">DÜNYA KEŞFİ</div>
+              <div class="text-xs font-extrabold font-mono-tech" style="color: var(--sage);">%16.4 <span class="font-sans font-semibold" style="color: var(--text-sub);">(32 Ülke)</span></div>
+            </div>
+            <div class="h-6 w-[1.5px]" style="background: var(--border-ink);"></div>
+            <div>
+              <div class="text-[9px] font-extrabold uppercase tracking-wider" style="color: var(--text-muted);">MESAFE</div>
+              <div class="text-xs font-extrabold font-mono-tech" id="total-km-counter">48.920 km</div>
+            </div>
+          </div>
+
+          <!-- Harita Zoom Butonları -->
+          <div class="flex items-center space-x-1.5">
+            <button onclick="zoomCanvas(0.15)" class="btn-3d btn-surface w-7 h-7 text-xs flex items-center justify-center">+</button>
+            <button onclick="zoomCanvas(-0.15)" class="btn-3d btn-surface w-7 h-7 text-xs flex items-center justify-center">−</button>
+          </div>
+        </div>
+
+        <!-- Kategori Filtre Hapları -->
+        <div class="flex space-x-1.5 overflow-x-auto no-scrollbar pb-1">
+          <button onclick="filterPins('all', this)" class="filter-chip btn-3d btn-azure px-3 py-1.5 text-[11px] whitespace-nowrap">Tümü (5)</button>
+          <button onclick="filterPins('exif', this)" class="filter-chip btn-3d btn-surface px-3 py-1.5 text-[11px] whitespace-nowrap">📸 Fotoğraf EXIF</button>
+          <button onclick="filterPins('drone', this)" class="filter-chip btn-3d btn-surface px-3 py-1.5 text-[11px] whitespace-nowrap">🚁 Drone & Hava</button>
+          <button onclick="filterPins('dive', this)" class="filter-chip btn-3d btn-surface px-3 py-1.5 text-[11px] whitespace-nowrap">🤿 Kıyı & Dalış</button>
+          <button onclick="filterPins('camp', this)" class="filter-chip btn-3d btn-surface px-3 py-1.5 text-[11px] whitespace-nowrap">⛺ Doğa & Kamp</button>
+        </div>
+
+        <!-- Yeni Durak Ekleme Modu Bilgi Bandı -->
+        <div id="add-pin-banner" class="hidden rounded-2xl px-3.5 py-2 text-xs font-extrabold text-white flex items-center justify-between shadow-lg" style="background: var(--coral);">
+          <span>📍 Haritada istediğin noktaya dokun!</span>
+          <button onclick="toggleAddPinMode()" class="underline text-[11px]">İptal</button>
+        </div>
+      </div>
+
+      <!-- İnteraktif Kartografik SVG Harita Kanvası -->
+      <div id="map-click-surface" onclick="handleMapClick(event)" class="absolute inset-0 overflow-hidden cursor-grab active:cursor-grabbing" style="background-color: var(--map-sea);">
+        <div id="map-zoom-layer" class="w-full h-full transition-transform duration-300 ease-out origin-center relative">
+          <svg viewBox="0 0 402 800" class="w-full h-full">
+            <defs>
+              <!-- Enlem/Boylam Izgara Deseni -->
+              <pattern id="graticule" width="44" height="44" patternUnits="userSpaceOnUse">
+                <path d="M 44 0 L 0 0 0 44" fill="none" stroke="var(--map-graticule)" stroke-width="1"/>
+              </pattern>
+            </defs>
+            <rect width="402" height="800" fill="url(#graticule)" />
+
+            <!-- Topoğrafik Eşyükselti Halkaları -->
+            <circle cx="290" cy="335" r="85" fill="none" stroke="var(--map-graticule)" stroke-width="1.2" stroke-dasharray="4 4"/>
+            <circle cx="155" cy="260" r="65" fill="none" stroke="var(--map-graticule)" stroke-width="1.2" stroke-dasharray="4 4"/>
+
+            <!-- Keşfedilmemiş Kıta Kütleleri -->
+            <path d="M25,180 Q75,165 110,205 T95,265 L35,255 Z" fill="var(--map-land)" stroke="var(--map-land-stroke)" stroke-width="1.5"/>
+            <path d="M210,165 Q290,150 355,195 T330,260 L220,245 Z" fill="var(--map-land)" stroke="var(--map-land-stroke)" stroke-width="1.5"/>
+            <path d="M215,415 Q305,400 355,465 T310,565 L225,530 Z" fill="var(--map-land)" stroke="var(--map-land-stroke)" stroke-width="1.5"/>
+
+            <!-- Ziyaret Edilen Ülkeler (Pastel Mint Dolgu) -->
+            <!-- İber Yarımadası -->
+            <path d="M72,320 Q112,308 128,332 L118,372 Q82,375 72,320 Z" fill="var(--map-visited)" stroke="var(--map-visited-stroke)" stroke-width="1.8"/>
+            <!-- İtalya & Alpler -->
+            <path d="M138,245 Q176,232 188,262 L172,305 Q148,298 138,245 Z" fill="var(--map-visited)" stroke="var(--map-visited-stroke)" stroke-width="1.8"/>
+            <!-- Polonya & Orta Avrupa -->
+            <path d="M182,198 Q228,190 238,225 L220,252 Q185,248 182,198 Z" fill="var(--map-visited)" stroke="var(--map-visited-stroke)" stroke-width="1.8"/>
+            <!-- Türkiye & Ege/Akdeniz -->
+            <path d="M235,315 Q315,302 348,330 L336,366 Q252,372 235,315 Z" fill="var(--map-visited)" stroke="var(--map-visited-stroke)" stroke-width="2"/>
+
+            <!-- Kavisli Seyahat & Uçuş Rotaları -->
+            <path d="M98,342 Q125,275 162,265" fill="none" stroke="var(--azure)" stroke-width="2.5" class="flight-arc"/>
+            <path d="M162,265 Q185,232 208,222" fill="none" stroke="var(--violet)" stroke-width="2.5" class="flight-arc"/>
+            <path d="M208,222 Q265,255 298,332" fill="none" stroke="var(--coral)" stroke-width="2.8" class="flight-arc"/>
+            <path d="M298,332 Q280,362 262,356" fill="none" stroke="var(--sage)" stroke-width="2.5" class="flight-arc"/>
+          </svg>
+
+          <!-- PİN KATMANI (Fotoğraf Önizlemeli Damla Pinler) -->
+          <div id="pins-container">
+            <!-- Pin 1: Kapadokya (Drone) -->
+            <button onclick="event.stopPropagation(); openStorySheet('kapadokya')" data-category="drone" class="map-pin pin-pop absolute top-[332px] left-[298px] -translate-x-1/2 -translate-y-1/2 group z-10">
+              <div class="relative flex flex-col items-center">
+                <div class="w-11 h-11 rounded-2xl p-0.5 shadow-lg transform group-hover:scale-110 transition border-2 border-white" style="background: var(--coral);">
+                  <div class="w-full h-full rounded-[13px] bg-gradient-to-br from-amber-300 via-orange-500 to-rose-600 flex items-center justify-center text-white font-bold text-sm">
+                    🎈
+                  </div>
+                </div>
+                <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">
+                  Kapadokya
+                </span>
+              </div>
+            </button>
+
+            <!-- Pin 2: Kaş & Kekova (Dalış) -->
+            <button onclick="event.stopPropagation(); openStorySheet('kas')" data-category="dive" class="map-pin pin-pop absolute top-[358px] left-[256px] -translate-x-1/2 -translate-y-1/2 group z-10">
+              <div class="relative flex flex-col items-center">
+                <div class="w-10 h-10 rounded-2xl p-0.5 shadow-lg transform group-hover:scale-110 transition border-2 border-white" style="background: var(--azure);">
+                  <div class="w-full h-full rounded-[13px] bg-gradient-to-br from-cyan-300 to-blue-600 flex items-center justify-center text-sm">
+                    🤿
+                  </div>
+                </div>
+                <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">
+                  Kaş • Kekova
+                </span>
+              </div>
+            </button>
+
+            <!-- Pin 3: Dolomitler (Kamp) -->
+            <button onclick="event.stopPropagation(); openStorySheet('dolomites')" data-category="camp" class="map-pin pin-pop absolute top-[265px] left-[162px] -translate-x-1/2 -translate-y-1/2 group z-10">
+              <div class="relative flex flex-col items-center">
+                <div class="w-10 h-10 rounded-2xl p-0.5 shadow-lg transform group-hover:scale-110 transition border-2 border-white" style="background: var(--sage);">
+                  <div class="w-full h-full rounded-[13px] bg-gradient-to-br from-emerald-300 to-teal-700 flex items-center justify-center text-sm">
+                    ⛺
+                  </div>
+                </div>
+                <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">
+                  Dolomitler
+                </span>
+              </div>
+            </button>
+
+            <!-- Pin 4: Krakow & Zakopane (EXIF) -->
+            <button onclick="event.stopPropagation(); openStorySheet('krakow')" data-category="exif" class="map-pin pin-pop absolute top-[222px] left-[208px] -translate-x-1/2 -translate-y-1/2 group z-10">
+              <div class="relative flex flex-col items-center">
+                <div class="w-10 h-10 rounded-2xl p-0.5 shadow-lg transform group-hover:scale-110 transition border-2 border-white" style="background: var(--violet);">
+                  <div class="w-full h-full rounded-[13px] bg-gradient-to-br from-purple-400 to-indigo-700 flex items-center justify-center text-sm">
+                    📸
+                  </div>
+                </div>
+                <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">
+                  Kraków
+                </span>
+              </div>
+            </button>
+
+            <!-- Pin 5: Lizbon (EXIF) -->
+            <button onclick="event.stopPropagation(); openStorySheet('lisbon')" data-category="exif" class="map-pin pin-pop absolute top-[342px] left-[98px] -translate-x-1/2 -translate-y-1/2 group z-10">
+              <div class="relative flex flex-col items-center">
+                <div class="w-10 h-10 rounded-2xl p-0.5 shadow-lg transform group-hover:scale-110 transition border-2 border-white" style="background: var(--amber);">
+                  <div class="w-full h-full rounded-[13px] bg-gradient-to-br from-yellow-300 to-amber-600 flex items-center justify-center text-sm">
+                    🚋
+                  </div>
+                </div>
+                <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">
+                  Lizbon
+                </span>
+              </div>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alt Mini Hızlı Kart (Story Sheet kapalıyken görünür) -->
+      <div class="mt-auto px-4 pb-24 z-20">
+        <div onclick="openStorySheet('kapadokya')" class="tactile-card p-3.5 flex items-center justify-between cursor-pointer hover:scale-[1.01] transition">
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-xl shadow-inner" style="background: var(--bg-subtle);">
+              🎈
+            </div>
+            <div>
+              <div class="text-[10px] font-extrabold uppercase tracking-wider" style="color: var(--coral);">SON DURAK • HİKAYEYİ AÇ</div>
+              <div class="text-sm font-extrabold">Göreme & Kızılçukur Vadisi</div>
+              <div class="text-[11px] font-mono-tech" style="color: var(--text-sub);">DJI Neo • 4K • 1.145m</div>
+            </div>
+          </div>
+          <div class="btn-3d btn-surface w-9 h-9 flex items-center justify-center">
+            <i data-lucide="chevron-up" class="w-4 h-4"></i>
+          </div>
+        </div>
+      </div>
+
+      <!-- EXPEDITION STORY SHEET (Durak Detay Çekmecesi) -->
+      <div id="story-sheet" class="bottom-sheet open absolute inset-x-0 bottom-0 z-40 rounded-t-[34px] p-5 pb-24 shadow-2xl max-h-[75%] overflow-y-auto no-scrollbar" style="background: var(--bg-card); border-top: 2px solid var(--border-ink);">
+        <div class="flex items-center justify-between mb-2">
+          <div class="w-10 h-1.5 rounded-full mx-auto" style="background: var(--border-ink);"></div>
+          <button onclick="closeStorySheet()" class="w-7 h-7 rounded-full flex items-center justify-center text-xs font-extrabold" style="background: var(--bg-subtle); color: var(--text-sub);">✕</button>
+        </div>
+
+        <!-- Başlık & EXIF Rozeti -->
+        <div class="flex items-start justify-between gap-2">
+          <div>
+            <div class="flex items-center space-x-2">
+              <span id="sheet-exif-badge" class="px-2.5 py-0.5 rounded-lg text-[10px] font-mono-tech font-bold text-white" style="background: var(--coral);">DJI Neo • 4K • 120m</span>
+              <span id="sheet-date" class="text-[11px] font-mono-tech" style="color: var(--text-sub);">14 Eyl 2026</span>
+            </div>
+            <h3 id="sheet-title" class="text-lg font-extrabold mt-1">Göreme & Kızılçukur Vadisi</h3>
+            <p id="sheet-coords" class="text-[11px] font-mono-tech" style="color: var(--text-sub);">38.6431° N, 34.8289° E • Türkiye</p>
+          </div>
+          <button onclick="switchTab('reels')" class="btn-3d btn-azure px-3 py-2 text-xs flex items-center space-x-1 shrink-0">
+            <i data-lucide="clapperboard" class="w-3.5 h-3.5"></i>
+            <span>Reels</span>
+          </button>
+        </div>
+
+        <!-- Hava & Rakım Hapları -->
+        <div class="flex items-center space-x-2 my-3">
+          <span id="sheet-weather" class="px-3 py-1 rounded-full text-[11px] font-bold" style="background: var(--bg-subtle);">☀️ 17°C Açık</span>
+          <span id="sheet-elev" class="px-3 py-1 rounded-full text-[11px] font-mono-tech font-bold" style="background: var(--bg-subtle);">⛰️ 1.145m</span>
+          <span id="sheet-count" class="px-3 py-1 rounded-full text-[11px] font-mono-tech font-bold" style="background: var(--bg-subtle);">🖼️ 24 Kare</span>
+        </div>
+
+        <!-- Fotoğraf Kolaj Kartı -->
+        <div class="grid grid-cols-3 gap-2 mb-3">
+          <div class="col-span-2 h-24 rounded-2xl bg-gradient-to-tr from-orange-500 via-amber-400 to-rose-400 p-2.5 flex items-end justify-between text-white shadow-inner">
+            <span class="text-[10px] font-mono-tech bg-black/40 px-2 py-0.5 rounded-md">DJI_0418.DNG</span>
+            <span class="text-lg">🎈</span>
+          </div>
+          <div class="h-24 rounded-2xl bg-gradient-to-b from-sky-400 to-indigo-600 p-2 flex flex-col justify-between text-white shadow-inner">
+            <span class="text-[9px] font-mono-tech bg-black/35 px-1.5 py-0.5 rounded self-start">27mm</span>
+            <span class="text-[11px] font-extrabold">+22 Foto</span>
+          </div>
+        </div>
+
+        <!-- El Yazısı Gezi Notu -->
+        <div class="p-3 rounded-2xl border-l-4 mb-3" style="background: var(--bg-subtle); border-color: var(--amber);">
+          <p id="sheet-note" class="font-hand text-lg leading-snug">
+            "Sabah gün doğumunda balonlar yükselirken vadi tamamen altın rengine büründü. Rüzgar sıfırdı, harika bir uçuş oldu!"
+          </p>
+        </div>
+
+        <button onclick="triggerCelebration('Durak Aktif Rotaya Eklendi! +40 XP')" class="btn-3d btn-sage w-full py-3 text-xs flex items-center justify-center space-x-2">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>Rotaya Ekle / Hikaye Oluştur</span>
+        </button>
+      </div>
+
+      <!-- YENİ DURAK EKLEME MODALI -->
+      <div id="new-pin-modal" class="hidden absolute inset-0 z-50 bg-black/40 backdrop-blur-xs flex items-center justify-center p-5">
+        <div class="tactile-card w-full p-5 space-y-3.5">
+          <div class="flex items-center justify-between">
+            <h3 class="text-base font-extrabold">Yeni Keşif Durağı</h3>
+            <button onclick="closeNewPinModal()" class="text-xs font-bold px-2 py-1 rounded-lg" style="background: var(--bg-subtle);">✕</button>
+          </div>
+          <input id="new-pin-name" type="text" placeholder="Durak adı (örn: Olimpos Sahili)" class="w-full px-3.5 py-2.5 rounded-xl text-xs font-bold outline-none border" style="background: var(--bg-subtle); border-color: var(--border-ink); color: var(--text-main);" />
+          <div class="grid grid-cols-4 gap-2 text-center">
+            <button onclick="selectPinEmoji('🎈', 'drone', this)" class="emoji-pick p-2 rounded-xl border-2 text-lg" style="border-color: var(--coral); background: var(--bg-subtle);">🎈</button>
+            <button onclick="selectPinEmoji('🤿', 'dive', this)" class="emoji-pick p-2 rounded-xl border text-lg" style="border-color: var(--border-ink);">🤿</button>
+            <button onclick="selectPinEmoji('⛺', 'camp', this)" class="emoji-pick p-2 rounded-xl border text-lg" style="border-color: var(--border-ink);">⛺</button>
+            <button onclick="selectPinEmoji('📸', 'exif', this)" class="emoji-pick p-2 rounded-xl border text-lg" style="border-color: var(--border-ink);">📸</button>
+          </div>
+          <button onclick="confirmAddPin()" class="btn-3d btn-sage w-full py-3 text-xs">Haritaya Pinle (+50 XP)</button>
+        </div>
+      </div>
+    </main>
+
+    <!-- ==================== SEKME 2: KEŞİF TARAYICI (EXIF İMPORTER) ==================== -->
+    <section id="tab-scanner" class="tab-screen flex-1 flex-col px-5 pt-1 pb-24 overflow-y-auto no-scrollbar">
+      <div class="flex items-center justify-between mb-3">
+        <div>
+          <h2 class="text-xl font-extrabold tracking-tight">Keşif Tarayıcı</h2>
+          <p class="text-xs" style="color: var(--text-sub);">Gizlilik odaklı cihaz içi EXIF kümeleme</p>
+        </div>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-mono-tech font-bold" style="background: var(--bg-subtle); color: var(--sage);">🔒 %100 Lokal</span>
+      </div>
+
+      <!-- Tarama Durum Kartı -->
+      <div class="tactile-card p-4 mb-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-11 h-11 rounded-2xl flex items-center justify-center text-white shadow-sm" style="background: var(--azure);">
+              <i data-lucide="scan-search" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <div id="scan-status-title" class="text-xs font-extrabold">18.420 Galeri Öğesi Hazır</div>
+              <div id="scan-status-sub" class="text-[11px] font-mono-tech" style="color: var(--text-sub);">GPS + Tarih EXIF meta verisi</div>
+            </div>
+          </div>
+          <button onclick="runExifScan()" id="scan-trigger-btn" class="btn-3d btn-azure px-3.5 py-2 text-xs">
+            Tara
+          </button>
+        </div>
+        <div class="w-full h-2.5 rounded-full overflow-hidden mt-3 p-0.5" style="background: var(--bg-subtle);">
+          <div id="scan-progress" class="h-full w-1/3 rounded-full transition-all duration-500" style="background: var(--sage);"></div>
+        </div>
+      </div>
+
+      <!-- Kümeleme Sonucu Bulunan Seyahat Kartları -->
+      <div class="text-[11px] font-extrabold uppercase tracking-wider mb-2" style="color: var(--text-muted);">Tespit Edilen Gezi Kümeleri</div>
+      <div class="space-y-3" id="exif-cluster-list">
+        <!-- Küme 1 -->
+        <label class="tactile-card p-3.5 flex items-center justify-between cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" checked class="exif-check w-5 h-5 accent-emerald-500 rounded-lg" />
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-sm font-extrabold">Ege Kıyıları</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono-tech font-bold" style="background: var(--bg-subtle); color: var(--azure);">42 Fotoğraf</span>
+              </div>
+              <div class="text-[11px] mt-0.5" style="color: var(--text-sub);">3 Durak • Kaş, Kekova, Fethiye • Eyl 2026</div>
+            </div>
+          </div>
+          <span class="text-lg">🌊</span>
+        </label>
+
+        <!-- Küme 2 -->
+        <label class="tactile-card p-3.5 flex items-center justify-between cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" checked class="exif-check w-5 h-5 accent-emerald-500 rounded-lg" />
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-sm font-extrabold">Polonya & Orta Avrupa</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono-tech font-bold" style="background: var(--bg-subtle); color: var(--violet);">128 Fotoğraf</span>
+              </div>
+              <div class="text-[11px] mt-0.5" style="color: var(--text-sub);">5 Durak • Kraków, Zakopane, Prag • May 2026</div>
+            </div>
+          </div>
+          <span class="text-lg">🏰</span>
+        </label>
+
+        <!-- Küme 3 -->
+        <label class="tactile-card p-3.5 flex items-center justify-between cursor-pointer">
+          <div class="flex items-center space-x-3">
+            <input type="checkbox" class="exif-check w-5 h-5 accent-emerald-500 rounded-lg" />
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <span class="text-sm font-extrabold">Dolomitler Zirve Kampı</span>
+                <span class="px-2 py-0.5 rounded text-[9px] font-mono-tech font-bold" style="background: var(--bg-subtle); color: var(--coral);">64 Fotoğraf</span>
+              </div>
+              <div class="text-[11px] mt-0.5" style="color: var(--text-sub);">4 Durak • Seceda, Tre Cime • Ağu 2026</div>
+            </div>
+          </div>
+          <span class="text-lg">🏔️</span>
+        </label>
+      </div>
+
+      <button onclick="importClustersToMap()" class="btn-3d btn-sage w-full py-3.5 text-xs mt-4 flex items-center justify-center space-x-2">
+        <i data-lucide="map-pin" class="w-4 h-4"></i>
+        <span>Seçilenleri Haritaya Aktar (+120 XP)</span>
+      </button>
+    </section>
+
+    <!-- ==================== SEKME 3: REELS STÜDYO (9:16 HİKAYE) ==================== -->
+    <section id="tab-reels" class="tab-screen flex-1 flex-col px-5 pt-1 pb-24 overflow-y-auto no-scrollbar">
+      <div class="flex items-center justify-between mb-2.5">
+        <div>
+          <h2 class="text-xl font-extrabold tracking-tight">Reels Stüdyo</h2>
+          <p class="text-xs" style="color: var(--text-sub);">9:16 Dikey Seyahat Animasyonu</p>
+        </div>
+        <!-- Free vs Pro Anahtarı -->
+        <button onclick="toggleProState()" id="reels-pro-pill" class="btn-3d btn-surface px-3 py-1.5 text-[11px] flex items-center space-x-1">
+          <span id="reels-pro-label">Free • Filigranlı</span>
+        </button>
+      </div>
+
+      <!-- 9:16 Canlı Video Önizleme Çerçevesi -->
+      <div id="reels-canvas" class="relative w-full h-[365px] rounded-[28px] overflow-hidden border-2 p-4 flex flex-col justify-between shadow-lg transition-all" style="background-color: #EAF4FA; border-color: var(--border-ink);">
+        <!-- Animasyonlu Rota Çizgisi -->
+        <svg viewBox="0 0 300 365" class="absolute inset-0 w-full h-full">
+          <path d="M50,295 C95,235 165,205 245,88" fill="none" stroke="#F97316" stroke-width="5" stroke-linecap="round" class="flight-arc"/>
+          <circle cx="50" cy="295" r="7" fill="#0EA5E9" stroke="#fff" stroke-width="2"/>
+          <circle cx="152" cy="208" r="7" fill="#22C55E" stroke="#fff" stroke-width="2"/>
+          <circle cx="245" cy="88" r="9" fill="#F97316" stroke="#fff" stroke-width="2.5"/>
+        </svg>
+
+        <!-- Üst Canlı Sayaç HUD -->
+        <div class="relative z-10 flex items-center justify-between">
+          <div class="px-3 py-1.5 rounded-2xl bg-white/90 backdrop-blur-md text-slate-900 shadow-sm">
+            <div class="text-[9px] font-extrabold uppercase text-slate-400">CANLI TELEMETRİ</div>
+            <div class="text-xs font-extrabold font-mono-tech"><span id="reels-km-tick">1.240</span> KM • 3 ÜLKE</div>
+          </div>
+          <button onclick="toggleReelsSpeed()" id="reels-speed-btn" class="px-2.5 py-1.5 rounded-xl bg-slate-900 text-white font-mono-tech text-[11px] font-bold shadow">
+            1x Hız
+          </button>
+        </div>
+
+        <!-- Ortada Yüzen Polaroid Fotoğraf Kartı -->
+        <div class="relative z-10 my-auto mx-auto bg-white p-2.5 rounded-2xl shadow-xl w-44 transform -rotate-2 border border-slate-100">
+          <div class="h-24 rounded-xl bg-gradient-to-tr from-amber-400 via-orange-500 to-pink-500 p-2 flex items-end justify-between text-white">
+            <span class="text-[10px] font-extrabold bg-black/45 px-2 py-0.5 rounded-md">📍 Kapadokya</span>
+            <span>🎈</span>
+          </div>
+          <div class="mt-1.5 flex items-center justify-between text-slate-800 px-0.5">
+            <span class="font-hand text-sm font-bold">Altın Saat Uçuşu</span>
+            <span class="text-[9px] font-mono-tech font-bold text-orange-500">4K</span>
+          </div>
+        </div>
+
+        <!-- Alt Müzik Waveform & Filigran -->
+        <div class="relative z-10 flex items-center justify-between">
+          <div class="px-2.5 py-1 rounded-xl bg-white/90 text-slate-800 flex items-center space-x-2 shadow-sm">
+            <div class="flex items-end space-x-0.5 h-4">
+              <span class="w-1 bg-sky-500 rounded-full eq-1"></span>
+              <span class="w-1 bg-emerald-500 rounded-full eq-2"></span>
+              <span class="w-1 bg-orange-500 rounded-full eq-3"></span>
+              <span class="w-1 bg-sky-500 rounded-full eq-4"></span>
+            </div>
+            <span class="text-[10px] font-bold">Horizon Breeze</span>
+          </div>
+
+          <div id="reels-watermark" class="px-2.5 py-1 rounded-xl bg-slate-900/85 text-white text-[10px] font-extrabold tracking-tight shadow">
+            AtlasPulse
+          </div>
+        </div>
+      </div>
+
+      <!-- Harita Tema Seçici -->
+      <div class="grid grid-cols-3 gap-2 mt-3">
+        <button onclick="setReelsTheme('pastel')" class="btn-3d btn-surface py-2 text-[11px]">🗺️ Pastel Atlas</button>
+        <button onclick="setReelsTheme('hybrid')" class="btn-3d btn-surface py-2 text-[11px]">🛰️ Uydu Hibrit</button>
+        <button onclick="setReelsTheme('radar')" class="btn-3d btn-surface py-2 text-[11px]">🌌 Gece Radarı</button>
+      </div>
+
+      <button onclick="handleReelsExport()" class="btn-3d btn-coral w-full py-3.5 text-xs mt-3 flex items-center justify-center space-x-2">
+        <i data-lucide="download" class="w-4 h-4"></i>
+        <span id="reels-export-text">MP4 Hikaye Dışa Aktar</span>
+      </button>
+
+      <!-- Pro Yükseltme Çekmecesi -->
+      <div id="pro-upsell-sheet" class="bottom-sheet absolute inset-x-0 bottom-0 z-50 rounded-t-[32px] p-5 pb-24 shadow-2xl" style="background: var(--bg-card); border-top: 2px solid var(--amber);">
+        <div class="flex items-center justify-between mb-2">
+          <span class="px-2.5 py-0.5 rounded-full text-[10px] font-extrabold uppercase bg-amber-400 text-slate-950">AtlasPulse PRO</span>
+          <button onclick="closeProSheet()" class="text-xs font-bold px-2 py-1 rounded-lg" style="background: var(--bg-subtle);">✕</button>
+        </div>
+        <h3 class="text-base font-extrabold">Filigransız 4K Reels & Sınırsız EXIF</h3>
+        <p class="text-xs mt-1" style="color: var(--text-sub);">Tüm seyahat videolarını 4K 60FPS filigransız dışa aktar, sınırsız geçmiş fotoğraf tara ve özel rozetleri aç.</p>
+        <button onclick="activateProFromSheet()" class="btn-3d btn-amber w-full py-3 text-xs mt-3.5">
+          7 Gün Ücretsiz Dene (₺89,99/ay)
+        </button>
+      </div>
+    </section>
+
+    <!-- ==================== SEKME 4: PASAPORT & ROZETLER ==================== -->
+    <section id="tab-passport" class="tab-screen flex-1 flex-col px-5 pt-1 pb-24 overflow-y-auto no-scrollbar">
+      <!-- Açık Pasaport Kimlik Kartı -->
+      <div class="tactile-card p-4 mb-4">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <!-- Dünya % Halka Göstergesi -->
+            <div class="relative w-14 h-14 flex items-center justify-center">
+              <svg class="w-14 h-14 -rotate-90" viewBox="0 0 56 56">
+                <circle cx="28" cy="28" r="23" fill="none" stroke="var(--bg-subtle)" stroke-width="5"/>
+                <circle cx="28" cy="28" r="23" fill="none" stroke="var(--sage)" stroke-width="5" stroke-dasharray="144" stroke-dashoffset="118" stroke-linecap="round"/>
+              </svg>
+              <span class="absolute text-[11px] font-extrabold font-mono-tech">%16</span>
+            </div>
+            <div>
+              <div class="flex items-center space-x-1.5">
+                <h2 class="text-base font-extrabold">Kaşif Pasaportu</h2>
+                <span class="px-2 py-0.5 rounded-full text-[9px] font-extrabold" style="background: var(--bg-subtle); color: var(--amber);">SEVİYE 12</span>
+              </div>
+              <p class="text-[11px] font-mono-tech mt-0.5" style="color: var(--text-sub);">32 ÜLKE • 4 KITA • 🔥 14 GÜN</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tırtıklı Ülke Posta Pulları -->
+      <div class="text-[11px] font-extrabold uppercase tracking-wider mb-2" style="color: var(--text-muted);">Toplanan Ülke Pulları</div>
+      <div class="grid grid-cols-3 gap-2.5 mb-4">
+        <div class="postage-stamp p-2.5 flex flex-col items-center text-center transform -rotate-2">
+          <span class="text-[8px] font-mono-tech font-bold" style="color: var(--coral);">TR • 38°N</span>
+          <span class="text-xl my-1">🇹🇷</span>
+          <span class="text-[11px] font-extrabold">Türkiye</span>
+          <span class="text-[8px] font-mono-tech mt-0.5 px-1.5 py-0.2 rounded" style="background: var(--bg-subtle);">14.09.26</span>
+        </div>
+
+        <div class="postage-stamp p-2.5 flex flex-col items-center text-center transform rotate-2">
+          <span class="text-[8px] font-mono-tech font-bold" style="color: var(--azure);">PL • 50°N</span>
+          <span class="text-xl my-1">🇵🇱</span>
+          <span class="text-[11px] font-extrabold">Polonya</span>
+          <span class="text-[8px] font-mono-tech mt-0.5 px-1.5 py-0.2 rounded" style="background: var(--bg-subtle);">09.05.26</span>
+        </div>
+
+        <div class="postage-stamp p-2.5 flex flex-col items-center text-center transform -rotate-1">
+          <span class="text-[8px] font-mono-tech font-bold" style="color: var(--sage);">IT • 46°N</span>
+          <span class="text-xl my-1">🇮🇹</span>
+          <span class="text-[11px] font-extrabold">İtalya</span>
+          <span class="text-[8px] font-mono-tech mt-0.5 px-1.5 py-0.2 rounded" style="background: var(--bg-subtle);">22.08.26</span>
+        </div>
+      </div>
+
+      <!-- Başarı Rozetleri -->
+      <div class="text-[11px] font-extrabold uppercase tracking-wider mb-2" style="color: var(--text-muted);">Keşif Rozetleri</div>
+      <div class="space-y-2.5">
+        <div class="tactile-card p-3 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg" style="background: var(--bg-subtle);">🚁</div>
+            <div>
+              <div class="text-xs font-extrabold">Gökyüzü Gözcüsü</div>
+              <div class="text-[11px]" style="color: var(--text-sub);">5 farklı ülkede drone uçuşu kaydet</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-white" style="background: var(--sage);">AÇILDI</span>
+        </div>
+
+        <div class="tactile-card p-3 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg" style="background: var(--bg-subtle);">🌊</div>
+            <div>
+              <div class="text-xs font-extrabold">Mavi Yolcu</div>
+              <div class="text-[11px]" style="color: var(--text-sub);">5 kıyı & dalış noktasını tamamla</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-xl text-[10px] font-mono-tech font-extrabold" style="background: var(--bg-subtle); color: var(--azure);">4 / 5</span>
+        </div>
+
+        <div class="tactile-card p-3 flex items-center justify-between">
+          <div class="flex items-center space-x-3">
+            <div class="w-10 h-10 rounded-2xl flex items-center justify-center text-lg" style="background: var(--bg-subtle);">🌍</div>
+            <div>
+              <div class="text-xs font-extrabold">Kıtalararası</div>
+              <div class="text-[11px]" style="color: var(--text-sub);">En az 2 farklı kıtada rota oluştur</div>
+            </div>
+          </div>
+          <span class="px-2.5 py-1 rounded-xl text-[10px] font-extrabold text-white" style="background: var(--sage);">AÇILDI</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Kutlama / Bildirim Toast & Konfeti -->
+    <div id="celebration-toast" class="hidden absolute top-16 left-1/2 -translate-x-1/2 z-50 px-4 py-2.5 rounded-2xl text-xs font-extrabold text-white shadow-xl flex items-center space-x-2 whitespace-nowrap" style="background: var(--sage); box-shadow: 0 4px 0 var(--sage-lip);">
+      <span>🎉</span>
+      <span id="celebration-text">Tebrikler!</span>
+    </div>
+
+    <!-- Alt Yüzen Navigasyon Barı -->
+    <nav class="absolute bottom-3.5 left-4 right-4 z-30">
+      <div class="glass-bar rounded-[28px] p-1.5 flex items-center justify-around">
+        <button onclick="switchTab('atlas')" id="nav-atlas" class="nav-pill flex-1 py-2 rounded-2xl flex flex-col items-center transition" style="background: var(--bg-subtle); color: var(--azure);">
+          <i data-lucide="compass" class="w-5 h-5"></i>
+          <span class="text-[10px] font-extrabold mt-0.5">Atlas</span>
+        </button>
+        <button onclick="switchTab('scanner')" id="nav-scanner" class="nav-pill flex-1 py-2 rounded-2xl flex flex-col items-center transition" style="color: var(--text-muted);">
+          <i data-lucide="scan-line" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold mt-0.5">Tarayıcı</span>
+        </button>
+        <button onclick="switchTab('reels')" id="nav-reels" class="nav-pill flex-1 py-2 rounded-2xl flex flex-col items-center transition" style="color: var(--text-muted);">
+          <i data-lucide="clapperboard" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold mt-0.5">Reels</span>
+        </button>
+        <button onclick="switchTab('passport')" id="nav-passport" class="nav-pill flex-1 py-2 rounded-2xl flex flex-col items-center transition" style="color: var(--text-muted);">
+          <i data-lucide="stamp" class="w-5 h-5"></i>
+          <span class="text-[10px] font-bold mt-0.5">Pasaport</span>
+        </button>
+      </div>
+    </nav>
+
+  </div>
+
+  <script>
+    lucide.createIcons();
+
+    let isPro = false;
+    let xp = 2450;
+
+    // 1. Light ('Sunlit Atlas') / Dark ('Midnight Expedition') Tema Geçişi
+    function toggleTheme() {
+      const html = document.documentElement;
+      const isLight = html.getAttribute('data-theme') === 'light';
+      const next = isLight ? 'dark' : 'light';
+      html.setAttribute('data-theme', next);
+
+      const iconName = next === 'dark' ? 'sun' : 'moon';
+      document.getElementById('mobile-theme-icon').setAttribute('data-lucide', iconName);
+      const studioIcon = document.getElementById('studio-theme-icon');
+      const studioLabel = document.getElementById('studio-theme-label');
+      if (studioIcon) studioIcon.setAttribute('data-lucide', iconName);
+      if (studioLabel) studioLabel.innerText = next === 'dark' ? 'Gündüz Atlası' : 'Gece Kampı';
+      lucide.createIcons();
+    }
+
+    // 2. Free vs Pro Durum Geçişi
+    function toggleProState() {
+      isPro = !isPro;
+      const headerPill = document.getElementById('header-tier-pill');
+      const reelsLabel = document.getElementById('reels-pro-label');
+      const watermark = document.getElementById('reels-watermark');
+      const studioLabel = document.getElementById('studio-pro-label');
+
+      if (isPro) {
+        headerPill.innerText = 'PRO ✨';
+        headerPill.style.background = 'var(--amber)';
+        headerPill.style.color = '#1E242B';
+        reelsLabel.innerText = 'PRO • 4K Filigransız';
+        watermark.style.display = 'none';
+        if (studioLabel) studioLabel.innerText = 'Plan: PRO';
+        triggerCelebration('AtlasPulse PRO Aktif Edildi!');
+      } else {
+        headerPill.innerText = 'FREE';
+        headerPill.style.background = 'var(--bg-subtle)';
+        headerPill.style.color = 'var(--text-sub)';
+        reelsLabel.innerText = 'Free • Filigranlı';
+        watermark.style.display = 'block';
+        if (studioLabel) studioLabel.innerText = 'Plan: Free';
+      }
+    }
+
+    // 3. Sekme Geçişleri
+    function switchTab(tabId) {
+      document.querySelectorAll('.tab-screen').forEach(s => s.classList.remove('active'));
+      document.getElementById('tab-' + tabId).classList.add('active');
+
+      document.querySelectorAll('.nav-pill').forEach(btn => {
+        btn.style.background = 'transparent';
+        btn.style.color = 'var(--text-muted)';
+      });
+      const activeNav = document.getElementById('nav-' + tabId);
+      activeNav.style.background = 'var(--bg-subtle)';
+      activeNav.style.color = 'var(--azure)';
+    }
+
+    // 4. Harita Zoom & Kategori Filtreleri
+    let zoomLevel = 1;
+    function zoomCanvas(delta) {
+      zoomLevel = Math.min(1.45, Math.max(0.85, zoomLevel + delta));
+      document.getElementById('map-zoom-layer').style.transform = `scale(${zoomLevel})`;
+    }
+
+    function filterPins(category, btn) {
+      document.querySelectorAll('.filter-chip').forEach(chip => {
+        chip.className = 'filter-chip btn-3d btn-surface px-3 py-1.5 text-[11px] whitespace-nowrap';
+      });
+      btn.className = 'filter-chip btn-3d btn-azure px-3 py-1.5 text-[11px] whitespace-nowrap';
+
+      document.querySelectorAll('.map-pin').forEach(pin => {
+        pin.style.display = (category === 'all' || pin.dataset.category === category) ? 'block' : 'none';
+      });
+    }
+
+    // 5. Expedition Story Sheet Verileri
+    const stories = {
+      kapadokya: {
+        exif: 'DJI Neo • 4K • 120m',
+        date: '14 Eyl 2026',
+        title: 'Göreme & Kızılçukur Vadisi',
+        coords: '38.6431° N, 34.8289° E • Türkiye',
+        weather: '☀️ 17°C Açık',
+        elev: '⛰️ 1.145m',
+        count: '🖼️ 24 Kare',
+        note: '"Sabah gün doğumunda balonlar yükselirken vadi tamamen altın rengine büründü. Rüzgar sıfırdı, harika bir uçuş oldu!"'
+      },
+      kas: {
+        exif: 'Action Cam • 27mm • 4K',
+        date: '19 Eyl 2026',
+        title: 'Kekova Batık Şehir & Kaş',
+        coords: '36.1836° N, 29.8831° E • Türkiye',
+        weather: '🌊 27°C Güneşli',
+        elev: '🤿 0m Kıyı',
+        count: '🖼️ 38 Kare',
+        note: '"Turkuaz koyda serbest dalış sonrası kano ile batık kalıntıların üzerinden geçtik. Su görüş mesafesi inanılmazdı."'
+      },
+      dolomites: {
+        exif: 'Sony A7C • 24mm f/1.8',
+        date: '22 Ağu 2026',
+        title: 'Seceda Sırtı, Dolomitler',
+        coords: '46.6003° N, 11.7242° E • İtalya',
+        weather: '⛅ 11°C Serin',
+        elev: '⛰️ 2.519m',
+        count: '🖼️ 41 Kare',
+        note: '"Sarp zirvelerin hemen altında bulut denizinin üzerinde kamp kurduk. Gece Samanyolu çıplak gözle netti."'
+      },
+      krakow: {
+        exif: 'iPhone 16 Pro • RAW',
+        date: '09 May 2026',
+        title: 'Kraków Eski Şehir & Wawel',
+        coords: '50.0647° N, 19.9450° E • Polonya',
+        weather: '🌤️ 15°C Bahar',
+        elev: '🏛️ 219m',
+        count: '🖼️ 64 Kare',
+        note: '"Rynek Meydanı sabah kahvesi ve Vistül nehri kıyısında gün batımı yürüyüşü ile harika bir Orta Avrupa durağı."'
+      },
+      lisbon: {
+        exif: 'Fujifilm X100VI • 35mm',
+        date: '18 Nis 2026',
+        title: 'Alfama & Miradouro Terası',
+        coords: '38.7117° N, 9.1301° W • Portekiz',
+        weather: '🌬️ 21°C Rüzgarlı',
+        elev: '🚋 78m',
+        count: '🖼️ 19 Kare',
+        note: '"Sarı tramvayların geçtiği dar sokaklarda kaybolup Atlantik gün batımını terastan izledik."'
+      }
+    };
+
+    function openStorySheet(key) {
+      const s = stories[key];
+      if (!s) return;
+      document.getElementById('sheet-exif-badge').innerText = s.exif;
+      document.getElementById('sheet-date').innerText = s.date;
+      document.getElementById('sheet-title').innerText = s.title;
+      document.getElementById('sheet-coords').innerText = s.coords;
+      document.getElementById('sheet-weather').innerText = s.weather;
+      document.getElementById('sheet-elev').innerText = s.elev;
+      document.getElementById('sheet-count').innerText = s.count;
+      document.getElementById('sheet-note').innerText = s.note;
+      document.getElementById('story-sheet').classList.add('open');
+    }
+
+    function closeStorySheet() {
+      document.getElementById('story-sheet').classList.remove('open');
+    }
+
+    // 6. Haritada İstediğin Yere Yeni Durak Ekleme Modu
+    let addPinMode = false;
+    let pendingCoords = { x: 200, y: 300 };
+    let selectedEmoji = '🎈';
+    let selectedCat = 'drone';
+
+    function toggleAddPinMode() {
+      addPinMode = !addPinMode;
+      const banner = document.getElementById('add-pin-banner');
+      if (addPinMode) {
+        closeStorySheet();
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+    }
+
+    function handleMapClick(e) {
+      if (!addPinMode) return;
+      const rect = document.getElementById('map-click-surface').getBoundingClientRect();
+      pendingCoords = {
+        x: Math.round(e.clientX - rect.left),
+        y: Math.round(e.clientY - rect.top)
+      };
+      document.getElementById('new-pin-modal').classList.remove('hidden');
+    }
+
+    function selectPinEmoji(emoji, cat, btn) {
+      selectedEmoji = emoji;
+      selectedCat = cat;
+      document.querySelectorAll('.emoji-pick').forEach(b => {
+        b.style.borderColor = 'var(--border-ink)';
+        b.style.background = 'transparent';
+      });
+      btn.style.borderColor = 'var(--coral)';
+      btn.style.background = 'var(--bg-subtle)';
+    }
+
+    function closeNewPinModal() {
+      document.getElementById('new-pin-modal').classList.add('hidden');
+    }
+
+    function confirmAddPin() {
+      const nameInput = document.getElementById('new-pin-name');
+      const title = nameInput.value.trim() || 'Yeni Keşif Noktası';
+      const id = 'custom_' + Date.now();
+
+      stories[id] = {
+        exif: 'Manuel Pin • GPS',
+        date: 'Bugün',
+        title: title,
+        coords: `${(36 + Math.random()*10).toFixed(4)}° N, ${(28 + Math.random()*10).toFixed(4)}° E`,
+        weather: '☀️ 22°C',
+        elev: '⛰️ 420m',
+        count: '🖼️ 1 Kare',
+        note: `"${title} noktası haritaya yeni keşif durağı olarak işaretlendi!"`
+      };
+
+      const btn = document.createElement('button');
+      btn.className = 'map-pin pin-pop absolute -translate-x-1/2 -translate-y-1/2 group z-10';
+      btn.style.left = pendingCoords.x + 'px';
+      btn.style.top = pendingCoords.y + 'px';
+      btn.dataset.category = selectedCat;
+      btn.onclick = (ev) => { ev.stopPropagation(); openStorySheet(id); };
+      btn.innerHTML = `
+        <div class="relative flex flex-col items-center">
+          <div class="w-10 h-10 rounded-2xl p-0.5 shadow-lg border-2 border-white" style="background: var(--coral);">
+            <div class="w-full h-full rounded-[13px] bg-amber-400 flex items-center justify-center text-sm">${selectedEmoji}</div>
+          </div>
+          <span class="mt-1 px-2 py-0.5 rounded-full text-[10px] font-extrabold shadow-sm whitespace-nowrap" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border-ink);">${title}</span>
+        </div>`;
+
+      document.getElementById('pins-container').appendChild(btn);
+      nameInput.value = '';
+      closeNewPinModal();
+      toggleAddPinMode();
+      triggerCelebration(`"${title}" Haritaya Eklendi! +50 XP`);
+    }
+
+    // 7. EXIF Tarayıcı Simülasyonu
+    function runExifScan() {
+      const bar = document.getElementById('scan-progress');
+      const title = document.getElementById('scan-status-title');
+      const btn = document.getElementById('scan-trigger-btn');
+
+      btn.innerText = 'Taranıyor...';
+      title.innerText = 'GPS Koordinatları Kümeleniyor...';
+      bar.style.width = '75%';
+
+      setTimeout(() => {
+        bar.style.width = '100%';
+        title.innerText = 'Tarama Tamamlandı • 3 Rota';
+        btn.innerText = 'Güncel ✓';
+        triggerCelebration('18.420 Fotoğraf Kümelendi!');
+      }, 950);
+    }
+
+    function importClustersToMap() {
+      const count = document.querySelectorAll('.exif-check:checked').length;
+      if (count === 0) {
+        triggerCelebration('Lütfen en az 1 gezi kümesi seç!');
+        return;
+      }
+      switchTab('atlas');
+      triggerCelebration(`${count} Gezi Rotası Haritaya Aktarıldı! +120 XP`);
+    }
+
+    // 8. Reels Stüdyo Kontrolleri
+    let fastSpeed = false;
+    function toggleReelsSpeed() {
+      fastSpeed = !fastSpeed;
+      const arc = document.querySelector('#reels-canvas .flight-arc');
+      const btn = document.getElementById('reels-speed-btn');
+      arc.style.animationDuration = fastSpeed ? '0.8s' : '1.8s';
+      btn.innerText = fastSpeed ? '2x Hız ⚡' : '1x Hız';
+    }
+
+    function setReelsTheme(mode) {
+      const box = document.getElementById('reels-canvas');
+      if (mode === 'pastel') box.style.backgroundColor = '#EAF4FA';
+      if (mode === 'hybrid') box.style.backgroundColor = '#D1FAE5';
+      if (mode === 'radar') box.style.backgroundColor = '#0F1726';
+    }
+
+    function handleReelsExport() {
+      if (!isPro) {
+        document.getElementById('pro-upsell-sheet').classList.add('open');
+      } else {
+        triggerCelebration('4K Filigransız MP4 Galeriye Kaydedildi!');
+      }
+    }
+
+    function closeProSheet() {
+      document.getElementById('pro-upsell-sheet').classList.remove('open');
+    }
+
+    function activateProFromSheet() {
+      closeProSheet();
+      if (!isPro) toggleProState();
+    }
+
+    // 9. XP & Kutlama Bildirimi
+    function triggerCelebration(msg) {
+      xp += 50;
+      document.getElementById('header-xp').innerText = xp.toLocaleString('tr-TR') + ' XP';
+      const toast = document.getElementById('celebration-toast');
+      document.getElementById('celebration-text').innerText = msg;
+      toast.classList.remove('hidden');
+      setTimeout(() => toast.classList.add('hidden'), 2400);
+    }
+  </script>
+</body>
+</html>
